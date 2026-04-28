@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WooDr — stolárska výroba na mieru. Od návrhu cez výrobu po inštaláciu.">
+  <title>WooDr — Stolárska výroba na mieru</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <script src="generated/gallery-data.js" onerror="console.warn('gallery-data.js not found — run build.sh first')"></script>
+  <script src="about_me.js" onerror="console.warn('about_me.js not found')"></script>
+  <script src="reviews.js" onerror="console.warn('reviews.js not found')"></script>
+  <style>
+    /* ===========================================
+       DESIGN TOKENS
+       =========================================== */
+    :root {
+      --cream:   #FFFDF1;
+      --warm:    #DD9E59;
+      --accent:  #D96F32;
+      --dark:    #562F00;
+      --dark-90: rgba(86,47,0,0.9);
+      --dark-50: rgba(86,47,0,0.5);
+      --dark-10: rgba(86,47,0,0.1);
+
+      --ff-heading: 'DM Serif Display', Georgia, serif;
+      --ff-body:    'DM Sans', system-ui, sans-serif;
+
+      --section-pad:   clamp(80px, 12vh, 160px);
+      --container-max: 1320px;
+      --container-pad: clamp(1.25rem, 5vw, 4rem);
+      --nav-h:         72px;
+      --ease:          0.3s ease;
+    }
+
+    /* ===========================================
+       RESET & BASE
+       =========================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--ff-body);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--dark);
+      background: var(--cream);
+      overflow-x: hidden;
+    }
+
+    img, video { max-width: 100%; display: block; }
+    ul { list-style: none; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* ===========================================
+       TYPOGRAPHY
+       =========================================== */
+    h1, h2, h3, h4 { font-family: var(--ff-heading); font-weight: 400; }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 1.75rem;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    h3 {
+      font-size: clamp(1.15rem, 2vw, 1.55rem);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin-bottom: 0.875rem;
+    }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ===========================================
+       LAYOUT
+       =========================================== */
+    .container {
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--container-pad);
+    }
+
+    .section-pad { padding-block: var(--section-pad); }
+
+    /* Eyebrow / label text */
+    .label {
+      display: inline-block;
+      font-family: var(--ff-body);
+      font-size: 1.00rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ===========================================
+       BUTTONS
+       =========================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      font-family: var(--ff-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      border: 2px solid transparent;
+      transition: background var(--ease), color var(--ease), border-color var(--ease);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--cream);
+      border-color: var(--accent);
+    }
+    .btn-primary:hover { background: var(--dark); border-color: var(--dark); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--cream);
+      border-color: rgba(255,253,241,0.5);
+    }
+    .btn-outline:hover { background: var(--cream); color: var(--dark); border-color: var(--cream); }
+
+    .btn-dark {
+      background: var(--dark);
+      color: var(--cream);
+      border-color: var(--dark);
+    }
+    .btn-dark:hover { background: var(--accent); border-color: var(--accent); }
+
+    /* ===========================================
+       IMAGE WRAPPER — hover + placeholder host
+       =========================================== */
+    .img-wrap {
+      overflow: hidden;
+      background: var(--dark);
+      position: relative;
+    }
+
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.65s ease;
+    }
+
+    .img-wrap:hover img {
+      transform: scale(1.04);
+    }
+
+    /* ===========================================
+       NAVBAR
+       =========================================== */
+    .navbar {
+      position: fixed;
+      inset-inline: 0;
+      top: 0;
+      z-index: 1000;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      transition: background var(--ease), border-color var(--ease);
+    }
+
+    .navbar.scrolled {
+      background: rgba(255,253,241,0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--dark-10);
+    }
+
+    .navbar .container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      z-index: 1;
+    }
+    .nav-logo-img {
+      height: 2rem;
+      width: auto;
+      display: block;
+      transition: filter var(--ease);
+    }
+    .navbar.scrolled .nav-logo-img { filter: invert(1) brightness(0); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.25rem;
+    }
+
+    .nav-links a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,253,241,0.85);
+      position: relative;
+      transition: color var(--ease);
+    }
+    .navbar.scrolled .nav-links a { color: var(--dark); }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width var(--ease);
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      padding: 0.55rem 1.35rem;
+      background: var(--accent) !important;
+      color: var(--cream) !important;
+      letter-spacing: 0.06em;
+      transition: background var(--ease) !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .navbar.scrolled .nav-cta { color: var(--cream) !important; }
+    .nav-cta:hover { background: var(--dark) !important; }
+
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px;
+      z-index: 1;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--cream);
+      transition: transform var(--ease), opacity var(--ease), background var(--ease);
+    }
+    .navbar.scrolled .nav-hamburger span { background: var(--dark); }
+
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile overlay */
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--dark);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.25rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--ease);
+    }
+    .nav-mobile.open { opacity: 1; pointer-events: all; }
+
+    .nav-mobile a {
+      font-family: var(--ff-heading);
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      color: rgba(255,253,241,0.8);
+      transition: color var(--ease);
+    }
+    .nav-mobile a:hover { color: var(--accent); }
+
+    /* ===========================================
+       HERO
+       =========================================== */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .hero-bg img.active { opacity: 1; z-index: 1; }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(
+        to top,
+        rgba(86,47,0,0.88) 0%,
+        rgba(86,47,0,0.3) 45%,
+        rgba(86,47,0,0.12) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      padding-bottom: clamp(60px, 10vh, 120px);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 58% 1fr;
+      align-items: flex-end;
+      gap: 2rem;
+    }
+
+    .hero-text h1 { color: var(--cream); }
+
+    .hero-text p {
+      color: rgba(255,253,241,0.75);
+      font-size: 1.1rem;
+      max-width: 44ch;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-scroll {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.625rem;
+      color: rgba(255,253,241,0.4);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding-bottom: 0.5rem;
+    }
+
+    .hero-scroll-line {
+      width: 1px;
+      height: 52px;
+      background: rgba(255,253,241,0.25);
+      transform-origin: top;
+      animation: scrollPulse 2.2s ease infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleY(1); opacity: 0.6; }
+      50%       { transform: scaleY(0.4); opacity: 0.2; }
+    }
+
+    /* ===========================================
+       O MNE (ABOUT)
+       =========================================== */
+    .about {
+      background: var(--cream);
+      padding-block: var(--section-pad);
+      overflow: hidden;
+    }
+
+    .about-inner {
+      display: grid;
+      grid-template-columns: 42% 1fr;
+      gap: clamp(3rem, 6vw, 8rem);
+      align-items: center;
+    }
+
+    .about-image {
+      margin-right: -5vw; /* bleeds beyond container edge */
+    }
+
+    .about-image .img-wrap {
+      aspect-ratio: 3/4;
+    }
+
+    /* ===========================================
+       SLUZBY (SERVICES)
+       =========================================== */
+    .services {
+      background: var(--warm);
+      padding-block: clamp(40px, 6vh, 80px);
+    }
+
+    .services-header {
+      max-width: 52%;
+      margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 0.75rem;
+    }
+
+    .service-item {
+      grid-column: span 6;
+      padding: clamp(1.25rem, 2vw, 1.75rem);
+      background: var(--cream);
+      border: 1px solid var(--dark-10);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: box-shadow var(--ease), transform var(--ease);
+    }
+    .service-item:hover {
+      box-shadow: 0 2px 20px rgba(86,47,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    /* Asymmetric widths on last row */
+    .service-item:nth-child(3) { grid-column: span 7; }
+    .service-item:nth-child(4) { grid-column: span 5; }
+
+    .service-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-num {
+      position: absolute;
+      bottom: -0.15em;
+      right: 0.3rem;
+      font-family: var(--ff-heading);
+      font-size: clamp(3.5rem, 6vw, 5.5rem);
+      line-height: 1;
+      color: var(--dark-10);
+      pointer-events: none;
+      user-select: none;
+      transition: color var(--ease);
+    }
+    .service-item:hover .service-num { color: rgba(86,47,0,0.18); }
+
+    .service-item p { color: var(--dark-50); font-size: 0.95rem; }
+
+    /* ===========================================
+       PROCES (PROCESS)
+       =========================================== */
+    .process {
+      background: var(--cream);
+      padding-block: var(--section-pad);
+      overflow: hidden;
+    }
+
+    .process-inner {
+      display: grid;
+      grid-template-columns: 36% 1fr;
+      gap: clamp(3rem, 6vw, 8rem);
+      align-items: start;
+    }
+
+    .process-header {
+      position: sticky;
+      top: calc(var(--nav-h) + 2.5rem);
+    }
+
+    .process-header p { color: var(--dark-50); font-size: 0.975rem; }
+
+    .process-step {
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      gap: 1.25rem;
+      padding-block: 2.25rem;
+      border-top: 1px solid var(--dark-10);
+      align-items: start;
+    }
+    .process-step:last-of-type { border-bottom: 1px solid var(--dark-10); }
+
+    .step-number {
+      font-family: var(--ff-heading);
+      font-size: 2.25rem;
+      color: var(--dark-10);
+      line-height: 1;
+      transition: color var(--ease);
+    }
+    .process-step:hover .step-number { color: var(--accent); }
+
+    .step-body p { color: var(--dark-50); font-size: 0.95rem; }
+
+    /* ===========================================
+       GALERIA (GALLERY)
+       =========================================== */
+    .gallery {
+      background: var(--dark);
+      padding-block: var(--section-pad);
+    }
+
+    .gallery .label { color: var(--warm); }
+    .gallery h2 { color: var(--cream); }
+
+    .gallery-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: clamp(2.5rem, 4vw, 4.5rem);
+    }
+
+    .gallery-header p {
+      color: rgba(255,253,241,0.5);
+      font-size: 0.975rem;
+      max-width: 32ch;
+      margin-bottom: 0;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: clamp(120px, 12vw, 170px);
+      grid-auto-flow: row dense;
+      gap: 0.5rem;
+    }
+
+    .gallery-item {
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .gallery-item .img-wrap {
+      height: 100%;
+      transition: box-shadow var(--ease);
+    }
+
+    .gallery-item:hover .img-wrap {
+      box-shadow: 0 2px 20px rgba(86,47,0,0.08);
+    }
+
+    .gallery-item .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.65s ease;
+    }
+    .gallery-item:hover .img-wrap img { transform: scale(1.06); }
+
+    /* Column-width pattern — repeats every 3 items, each row = 12 cols
+       5+4+3 = 12, dense fill zapcháva medzery automaticky */
+    .gallery-item:nth-child(3n+1) { grid-column: span 5; }
+    .gallery-item:nth-child(3n+2) { grid-column: span 4; }
+    .gallery-item:nth-child(3n+3) { grid-column: span 3; }
+
+    /* ── GALERIA-LIMIT ── skryť/ukázať časť galérie ────────────
+       Ak chceš zobraziť celú galériu bez kliknutia, vymaž tento
+       blok a odstráň triedu is-collapsed z JS sekcie GALERIA-LIMIT */
+    .gallery-grid.is-collapsed {
+      max-height: clamp(460px, 50vw, 680px);
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 92%);
+      mask-image: linear-gradient(to bottom, black 50%, transparent 92%);
+      transition: max-height 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gallery-more {
+      text-align: center;
+      margin-top: 2.5rem;
+      transition: opacity 0.3s ease;
+    }
+    /* ── /GALERIA-LIMIT ─────────────────────────────────────── */
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(86,47,0,0.96);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .lightbox.active { display: flex; }
+
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      box-shadow: 0 2px 20px rgba(86,47,0,0.08);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      color: rgba(255,253,241,0.6);
+      font-size: 2.5rem;
+      line-height: 1;
+      transition: color var(--ease);
+    }
+    .lightbox-close:hover { color: var(--cream); }
+
+    /* ===========================================
+       REFERENCIE (TESTIMONIALS)
+       =========================================== */
+    .testimonials {
+      background: var(--warm);
+      padding-block: var(--section-pad);
+    }
+
+    .testimonials-header {
+      max-width: 46%;
+      margin-bottom: clamp(3rem, 5vw, 5rem);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .testimonial-item {
+      padding: clamp(1.75rem, 3vw, 2.5rem);
+      background: var(--cream);
+    }
+
+    /* Offset rhythm */
+    .testimonial-item:nth-child(2) { margin-top: 3rem; }
+    .testimonial-item:nth-child(3) { margin-top: 1.5rem; }
+
+    .quote-mark {
+      display: block;
+      font-family: var(--ff-heading);
+      font-size: 4.5rem;
+      color: var(--accent);
+      line-height: 0.6;
+      margin-bottom: 1.25rem;
+    }
+
+    .testimonial-text {
+      font-size: 0.975rem;
+      line-height: 1.65;
+      color: var(--dark);
+      margin-bottom: 1.5rem;
+    }
+
+    .testimonial-author {
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: var(--dark-50);
+      letter-spacing: 0.04em;
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 0.15rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    .testimonials-footer {
+      margin-top: clamp(3rem, 5vw, 5rem);
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .testimonials-footer p {
+      margin: 0;
+      color: var(--dark-50);
+      font-size: 0.9rem;
+      max-width: 38ch;
+    }
+
+    @media (max-width: 767px) {
+      .testimonials-footer { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ===========================================
+       KONTAKT (CONTACT)
+       =========================================== */
+    .contact {
+      background: var(--cream);
+      padding-block: var(--section-pad);
+    }
+
+    .contact-header {
+      margin-bottom: 2rem;
+    }
+
+    .contact-header h2 { margin-bottom: 0.75rem; }
+
+    .contact-header > p { color: var(--dark-50); margin-bottom: 0; }
+
+    .contact-strip {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--dark-10);
+    }
+
+    .contact-strip-item {
+      font-size: 0.9rem;
+      color: var(--dark-50);
+      text-decoration: none;
+      padding-inline: 1.75rem;
+      letter-spacing: 0.02em;
+      transition: color var(--ease);
+    }
+
+    .contact-strip-item:first-child { padding-left: 0; }
+
+    .contact-strip-item + .contact-strip-item { border-left: 1px solid var(--dark-20, rgba(30,20,10,0.15)); }
+
+    a.contact-strip-item:hover { color: var(--accent); }
+
+    /* Form */
+    .form-group { margin-bottom: 1.5rem; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dark-50);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.875rem 0;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--dark-10);
+      color: var(--dark);
+      font-family: var(--ff-body);
+      font-size: 1rem;
+      outline: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+      transition: border-color var(--ease);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus { border-bottom-color: var(--accent); }
+
+    .form-group textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ===========================================
+       FOOTER
+       =========================================== */
+    .footer {
+      background: var(--dark);
+      padding-block: clamp(3.5rem, 6vw, 5.5rem);
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .footer-logo {
+      display: block;
+      height: 2.5rem;
+      width: auto;
+      margin-bottom: 1rem;
+    }
+
+    .footer-tagline {
+      color: rgba(255,253,241,0.38);
+      font-size: 0.875rem;
+      max-width: 26ch;
+      line-height: 1.55;
+    }
+
+    .footer-col-title {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,253,241,0.28);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-col-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .footer-col-links a {
+      color: rgba(255,253,241,0.58);
+      font-size: 0.9rem;
+      transition: color var(--ease);
+    }
+    .footer-col-links a:hover { color: var(--cream); }
+
+    .footer-bottom {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,253,241,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      color: rgba(255,253,241,0.25);
+      font-size: 0.78rem;
+    }
+
+    /* ===========================================
+       SCROLL REVEAL
+       =========================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.72s ease, transform 0.72s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    .reveal-stagger > * {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal-stagger.visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0s; }
+    .reveal-stagger.visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.1s; }
+    .reveal-stagger.visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.2s; }
+    .reveal-stagger.visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.3s; }
+
+    /* ===========================================
+       RESPONSIVE
+       =========================================== */
+    @media (max-width: 960px) {
+      .nav-links   { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-mobile  { display: flex; }
+
+      .hero-inner  { grid-template-columns: 1fr; }
+      .hero-scroll { display: none; }
+
+      .about-inner { grid-template-columns: 1fr; }
+      .about-image { margin-right: 0; order: -1; }
+      .about-image .img-wrap { aspect-ratio: 4/3; }
+
+      .services-header { max-width: 100%; }
+      .service-item    { grid-column: span 12 !important; }
+
+      .process-inner  { grid-template-columns: 1fr; }
+      .process-header { position: static; }
+
+      .gallery-item   { grid-column: span 4 !important; }
+
+      .testimonials-header { max-width: 100%; }
+      .testimonials-grid   { grid-template-columns: 1fr; }
+      .testimonial-item    { margin-top: 0 !important; }
+
+      .contact-inner  { grid-template-columns: 1fr; }
+
+      .footer-inner   { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+
+    @media (max-width: 560px) {
+      .gallery-item { grid-column: span 12 !important; }
+      .form-row     { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================
+       NAVBAR
+       ====================================================== -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Hlavná navigácia">
+    <div class="container">
+      <a href="#" class="nav-logo" aria-label="WooDr — domov">
+        <img src="Logo/Logo_Woodr.png" alt="WooDr" class="nav-logo-img">
+      </a>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#o-mne">O mne</a></li>
+        <li><a href="#sluzby">Služby</a></li>
+        <li><a href="#proces">Proces</a></li>
+        <li><a href="#galeria">Galéria</a></li>
+        <li><a href="#kontakt" class="nav-cta">Kontakt</a></li>
+      </ul>
+
+      <button class="nav-hamburger" id="hamburger"
+        aria-label="Otvoriť menu" aria-expanded="false" aria-controls="nav-mobile">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Mobilná navigácia" aria-hidden="true">
+    <a href="#o-mne">O mne</a>
+    <a href="#sluzby">Služby</a>
+    <a href="#proces">Proces</a>
+    <a href="#galeria">Galéria</a>
+    <a href="#referencie">Referencie</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+
+  <!-- ======================================================
+       HERO
+       ====================================================== -->
+  <section class="hero" id="hero" aria-label="Úvod">
+    <div class="hero-bg" id="hero-bg" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <div class="container">
+        <div class="hero-inner">
+          <div class="hero-text">
+            <span class="label">Stolárska výroba na mieru</span>
+            <h1><!-- Fáza 2: hlavný headline --></h1>
+            <p><!-- Fáza 2: podtitulok --></p>
+            <div class="hero-actions">
+              <a href="#galeria" class="btn btn-outline">Zobraziť práce</a>
+              <a href="#kontakt" class="btn btn-primary">Nezáväzná konzultácia</a>
+            </div>
+          </div>
+
+          <div class="hero-scroll" aria-hidden="true">
+            <div class="hero-scroll-line"></div>
+            <span>Scroll</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       O MNE
+       ====================================================== -->
+  <section class="about" id="o-mne" aria-label="O mne">
+    <div class="container">
+      <div class="about-inner">
+        <div class="about-text reveal">
+          <span class="label">O mne</span>
+          <h2><!-- Fáza 2: nadpis --></h2>
+          <p><!-- Fáza 2: text --></p>
+          <p><!-- Fáza 2: text --></p>
+          <a href="#kontakt" class="btn btn-dark" style="margin-top:1.75rem"><!-- Fáza 2: CTA --></a>
+        </div>
+
+        <div class="about-image reveal" id="about-image">
+          <div class="img-wrap" style="aspect-ratio:3/4">
+            <!-- JS vloží obrázok z images/o-mne/ -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       SLUZBY
+       ====================================================== -->
+  <section class="services" id="sluzby" aria-label="Služby">
+    <div class="container">
+      <div class="services-header reveal">
+        <span class="label">Čo robím</span>
+        <h2><!-- Fáza 2: nadpis --></h2>
+      </div>
+
+      <div class="services-grid reveal-stagger">
+        <article class="service-item">
+          <h3>Kuchyne na mieru</h3>
+          <p>Kompletný návrh a výroba kuchynských liniek — od merania priestoru cez výber materiálov až po finálnu montáž.</p>
+          <span class="service-num" aria-hidden="true">01</span>
+        </article>
+        <article class="service-item">
+          <h3>Postele a spálňový nábytok</h3>
+          <p>Masívne postele, nočné stolíky a komody. Nábytok do spálne, v ktorom sa spojí komfort s kvalitným remeselným spracovaním.</p>
+          <span class="service-num" aria-hidden="true">02</span>
+        </article>
+        <article class="service-item">
+          <h3>Šatníky a úložné systémy</h3>
+          <p>Vstavané aj voľne stojace šatníky šité na mieru vášmu priestoru. Maximálne využitie každého centimetra.</p>
+          <span class="service-num" aria-hidden="true">03</span>
+        </article>
+        <article class="service-item">
+          <h3>Nábytok na mieru</h3>
+          <p>Jedálenské stoly, police, TV steny, kúpeľňové skrinky — čokoľvek si viete predstaviť, viem vyrobiť z dreva.</p>
+          <span class="service-num" aria-hidden="true">04</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       PROCES
+       ====================================================== -->
+  <section class="process" id="proces" aria-label="Pracovný proces">
+    <div class="container">
+      <div class="process-inner">
+        <div class="process-header reveal">
+          <span class="label">Ako to funguje</span>
+          <h2>Štyri kroky k nábytku, ktorý presne sedí</h2>
+          <p>Jednoduchý proces bez prekvapení — od prvej konzultácie až po hotový nábytok vo vašom priestore.</p>
+        </div>
+
+        <div class="process-body">
+          <div class="process-step reveal">
+            <span class="step-number" aria-hidden="true">01</span>
+            <div class="step-body">
+              <h3>Meranie priestoru</h3>
+              <p>Prídem za vami domov, premeriam priestor a zistím, čo presne potrebujete. Žiadne dohady — len presné čísla a jasné zadanie.</p>
+            </div>
+          </div>
+          <div class="process-step reveal">
+            <span class="step-number" aria-hidden="true">02</span>
+            <div class="step-body">
+              <h3>Návrh na mieru</h3>
+              <p>Vypracujem návrh priamo pre váš priestor — materiál, farby, rozmery. Upravujem ho dovtedy, kým nebude presne tak, ako ste si predstavovali.</p>
+            </div>
+          </div>
+          <div class="process-step reveal">
+            <span class="step-number" aria-hidden="true">03</span>
+            <div class="step-body">
+              <h3>Výroba v dielni</h3>
+              <p>Každý kus vyrábam ručne vo vlastnej dielni. Kvalitu materiálu aj spracovania kontrolujem osobne — od prvého rezu po posledný detail.</p>
+            </div>
+          </div>
+          <div class="process-step reveal">
+            <span class="step-number" aria-hidden="true">04</span>
+            <div class="step-body">
+              <h3>Montáž a odovzdanie</h3>
+              <p>Nábytok doveziem a nainštalujem na centimeter presne. Po montáži upracem a vy si môžete ihneď užívať výsledok.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       GALERIA
+       ====================================================== -->
+  <section class="gallery" id="galeria" aria-label="Galéria prác">
+    <div class="container">
+      <div class="gallery-header">
+        <div class="reveal">
+          <span class="label">Hotové práce</span>
+          <h2><!-- Fáza 2: nadpis --></h2>
+        </div>
+        <p class="reveal"><!-- Fáza 2: podtitulok --></p>
+      </div>
+
+      <div class="gallery-grid" id="gallery-grid" role="list" aria-label="Fotogaléria">
+        <!-- JS vloží položky z GALLERY_GALERIA + GALLERY_SHOWCASE -->
+      </div>
+
+      <!-- ── GALERIA-LIMIT ── tlačidlo zobraziť viac ── -->
+      <div class="gallery-more" id="gallery-more">
+        <button class="btn btn-outline" id="gallery-show-more">Zobraziť všetky práce</button>
+      </div>
+      <!-- ── /GALERIA-LIMIT ── -->
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Zväčšený obrázok">
+      <button class="lightbox-close" id="lightbox-close" aria-label="Zavrieť (Esc)">×</button>
+      <img class="lightbox-img" id="lightbox-img" src="" alt="">
+    </div>
+  </section>
+
+  <!-- ======================================================
+       REFERENCIE
+       ====================================================== -->
+  <section class="testimonials" id="referencie" aria-label="Referencie zákazníkov">
+    <div class="container">
+      <div class="testimonials-header reveal">
+        <span class="label">Spokojní zákazníci</span>
+        <h2>Čo hovoria ľudia, pre ktorých som pracoval</h2>
+      </div>
+
+      <div class="testimonials-grid reveal-stagger" id="reviews-grid">
+        <!-- JS vloží recenzie z reviews.js -->
+      </div>
+
+      <div class="testimonials-footer reveal">
+        <p>Páčila sa vám naša spolupráca? Recenzia na Google pomôže ďalším zákazníkom nás nájsť.</p>
+        <a href="#" class="btn btn-dark" id="google-review-btn" target="_blank" rel="noopener noreferrer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Napísať recenziu na Google
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       KONTAKT
+       ====================================================== -->
+  <section class="contact" id="kontakt" aria-label="Kontaktujte ma">
+    <div class="container">
+
+      <div class="contact-header reveal">
+        <span class="label">Kontakt</span>
+        <h2>Povedzme si o vašom projekte</h2>
+        <p>Popíšte, čo hľadáte — ozvem sa do 24 hodín s predbežnou cenou a navrhujem stretnutie.</p>
+      </div>
+
+      <div class="contact-strip reveal">
+        <a href="#" class="contact-strip-item" id="cs-phone">—</a>
+        <a href="#" class="contact-strip-item" id="cs-email">—</a>
+        <span class="contact-strip-item" id="cs-location">—</span>
+      </div>
+
+      <form class="contact-form reveal" id="contact-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Meno a priezvisko</label>
+            <input type="text" id="name" name="name" autocomplete="name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Telefón</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label for="project-type">Typ projektu</label>
+            <select id="project-type" name="project-type">
+              <option value="" disabled selected></option>
+              <option value="kuchyna">Kuchynská linka</option>
+              <option value="satnik">Vstavaná skriňa / šatník</option>
+              <option value="postel">Posteľ</option>
+              <option value="obyvacka">Obývačkový nábytok</option>
+              <option value="ine">Iné</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="message">Popis projektu</label>
+          <textarea id="message" name="message" required placeholder="Čo by ste chceli vyrobiť? Rozmery, materiál, termín..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-dark">Odoslať správu</button>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ======================================================
+       FOOTER
+       ====================================================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <img src="Logo/Logo_Woodr.png" alt="WooDr" class="footer-logo">
+          <p class="footer-tagline"><!-- Fáza 2: tagline --></p>
+        </div>
+
+        <div>
+          <p class="footer-col-title">Navigácia</p>
+          <ul class="footer-col-links" role="list">
+            <li><a href="#o-mne">O mne</a></li>
+            <li><a href="#sluzby">Služby</a></li>
+            <li><a href="#proces">Proces</a></li>
+            <li><a href="#galeria">Galéria</a></li>
+            <li><a href="#referencie">Referencie</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer-col-title">Kontakt</p>
+          <ul class="footer-col-links" role="list">
+            <li><a href="tel:"><!-- Fáza 2 --></a></li>
+            <li><a href="mailto:"><!-- Fáza 2 --></a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2025 WooDr. Všetky práva vyhradené.</p>
+        <p class="footer-copy">Vytvorené s láskou k drevu.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================
+       JAVASCRIPT
+       ====================================================== -->
+  <script>
+    /* --------------------------------------------------
+       PLACEHOLDER — SVG wood-grain fallback image
+       -------------------------------------------------- */
+    function placeholder(w, h) {
+      w = w || 800; h = h || 600;
+      const s = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+        <defs>
+          <pattern id="wg" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+            <path d="M0 30 Q60 24 120 30 Q60 36 0 30Z" stroke="rgba(255,255,255,0.025)" fill="none" stroke-width="1.5"/>
+            <path d="M0 60 Q60 52 120 60 Q60 68 0 60Z" stroke="rgba(255,255,255,0.03)"  fill="none" stroke-width="1"/>
+            <path d="M0 90 Q60 84 120 90 Q60 96 0 90Z" stroke="rgba(255,255,255,0.02)"  fill="none" stroke-width="1.5"/>
+          </pattern>
+        </defs>
+        <rect width="${w}" height="${h}" fill="#562F00"/>
+        <rect width="${w}" height="${h}" fill="url(#wg)" opacity="0.9"/>
+        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+          font-family="Georgia,serif" font-size="${Math.round(Math.min(w,h)*0.065)}"
+          font-weight="300" fill="rgba(255,253,241,0.28)" letter-spacing="7">WooDr</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+    }
+
+    function makeImg(src, alt, pw, ph) {
+      const img = document.createElement('img');
+      img.alt = alt || '';
+      img.src = src || placeholder(pw, ph);
+      if (src) img.onerror = function() { this.onerror = null; this.src = placeholder(pw, ph); };
+      return img;
+    }
+
+    /* --------------------------------------------------
+       SAFE ACCESS to gallery arrays from gallery-data.js
+       -------------------------------------------------- */
+    function getArr(name) {
+      try {
+        const v = window['GALLERY_' + name.toUpperCase().replace(/-/g, '_')];
+        return Array.isArray(v) ? v : [];
+      } catch (_) { return []; }
+    }
+
+    /* --------------------------------------------------
+       HERO — rotating background images
+       -------------------------------------------------- */
+    (function() {
+      const bg = document.getElementById('hero-bg');
+      if (!bg) return;
+
+      const imgs = [...getArr('HERO')].sort(() => Math.random() - 0.5);
+
+      if (!imgs.length) {
+        const img = makeImg('', '', 1600, 900);
+        img.className = 'active';
+        bg.appendChild(img);
+        return;
+      }
+
+      imgs.forEach((src, i) => {
+        const img = makeImg(src, '', 1600, 900);
+        img.className = i === 0 ? 'active' : '';
+        bg.appendChild(img);
+      });
+
+      if (imgs.length < 2) return;
+      let cur = 0;
+      setInterval(() => {
+        const all = bg.querySelectorAll('img');
+        all[cur].className = '';
+        cur = (cur + 1) % all.length;
+        all[cur].className = 'active';
+      }, 5500);
+    })();
+
+    /* --------------------------------------------------
+       O MNE — single photo
+       -------------------------------------------------- */
+    (function() {
+      const wrap = document.querySelector('#about-image .img-wrap');
+      if (!wrap) return;
+      const arr = getArr('O_MNE');
+      const src = arr[Math.floor(Math.random() * arr.length)] || '';
+      wrap.appendChild(makeImg(src, 'Stolár WooDr pri práci', 600, 800));
+    })();
+
+    /* --------------------------------------------------
+       GALLERY — masonry grid
+       -------------------------------------------------- */
+    (function() {
+      const grid = document.getElementById('gallery-grid');
+      if (!grid) return;
+
+      const items = [...getArr('GALERIA'), ...getArr('SHOWCASE')];
+      const count = items.length || 9;
+
+      for (let i = 0; i < count; i++) {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.setAttribute('role', 'listitem');
+
+        const wrap = document.createElement('div');
+        wrap.className = 'img-wrap';
+
+        const img = makeImg(items[i] || '', `Stolárska práca ${i + 1}`, 800, 600);
+        item.addEventListener('click', () => openLightbox(img.src, img.alt));
+
+        wrap.appendChild(img);
+        item.appendChild(wrap);
+        grid.appendChild(item);
+      }
+    })();
+
+    /* ── GALERIA-LIMIT ── zobraziť viac / menej ─────── */
+    (function() {
+      const MASK = 'linear-gradient(to bottom, black 50%, transparent 92%)';
+      const grid = document.getElementById('gallery-grid');
+      const btn  = document.getElementById('gallery-show-more');
+      if (!grid || !btn) return;
+
+      grid.classList.add('is-collapsed');
+      let expanded = false;
+
+      btn.addEventListener('click', function() {
+        if (!expanded) {
+          grid.style.maxHeight = grid.scrollHeight + 'px';
+          grid.style.webkitMaskImage = 'none';
+          grid.style.maskImage = 'none';
+          btn.textContent = 'Zobraziť menej';
+          grid.addEventListener('transitionend', function() {
+            grid.style.maxHeight = 'none';
+            grid.classList.remove('is-collapsed');
+          }, { once: true });
+          expanded = true;
+        } else {
+          grid.classList.add('is-collapsed');
+          grid.style.maxHeight = grid.scrollHeight + 'px';
+          grid.offsetHeight;
+          grid.style.maxHeight = '';
+          grid.style.webkitMaskImage = MASK;
+          grid.style.maskImage = MASK;
+          btn.textContent = 'Zobraziť všetky práce';
+          grid.closest('section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          expanded = false;
+        }
+      });
+    })();
+    /* ── /GALERIA-LIMIT ─────────────────────────────── */
+
+    /* --------------------------------------------------
+       LIGHTBOX
+       -------------------------------------------------- */
+    function openLightbox(src, alt) {
+      const lb  = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      if (!lb || !img) return;
+      img.src = src;
+      img.alt = alt || '';
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox')?.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('lightbox-close')?.addEventListener('click', closeLightbox);
+    document.getElementById('lightbox')?.addEventListener('click', function(e) {
+      if (e.target === this) closeLightbox();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    /* --------------------------------------------------
+       NAVBAR — scroll behaviour
+       -------------------------------------------------- */
+    const navbar = document.getElementById('navbar');
+    const tick = () => navbar.classList.toggle('scrolled', window.scrollY > 50);
+    window.addEventListener('scroll', tick, { passive: true });
+    tick();
+
+    /* --------------------------------------------------
+       MOBILE MENU
+       -------------------------------------------------- */
+    const hamburger  = document.getElementById('hamburger');
+    const navMobile  = document.getElementById('nav-mobile');
+    let menuOpen = false;
+
+    function toggleMenu(force) {
+      menuOpen = (force !== undefined) ? force : !menuOpen;
+      hamburger.classList.toggle('open', menuOpen);
+      navMobile.classList.toggle('open', menuOpen);
+      navMobile.setAttribute('aria-hidden', String(!menuOpen));
+      hamburger.setAttribute('aria-expanded', String(menuOpen));
+      document.body.style.overflow = menuOpen ? 'hidden' : '';
+    }
+
+    hamburger?.addEventListener('click', () => toggleMenu());
+    navMobile?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+
+    /* --------------------------------------------------
+       SCROLL REVEAL — IntersectionObserver
+       -------------------------------------------------- */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
+
+    /* --------------------------------------------------
+       REVIEWS — render from reviews.js
+       -------------------------------------------------- */
+    (function() {
+      var grid = document.getElementById('reviews-grid');
+      if (!grid || typeof REVIEWS === 'undefined' || !REVIEWS.length) return;
+
+      REVIEWS.forEach(function(r) {
+        var article = document.createElement('article');
+        article.className = 'testimonial-item';
+
+        var quote = document.createElement('span');
+        quote.className = 'quote-mark';
+        quote.setAttribute('aria-hidden', 'true');
+        quote.textContent = '„';
+        article.appendChild(quote);
+
+        if (r.stars) {
+          var starsEl = document.createElement('div');
+          starsEl.className = 'testimonial-stars';
+          starsEl.setAttribute('aria-label', r.stars + ' z 5 hviezdičiek');
+          for (var i = 0; i < 5; i++) {
+            var s = document.createElement('span');
+            s.setAttribute('aria-hidden', 'true');
+            s.textContent = i < r.stars ? '★' : '☆';
+            starsEl.appendChild(s);
+          }
+          article.appendChild(starsEl);
+        }
+
+        var text = document.createElement('p');
+        text.className = 'testimonial-text';
+        text.textContent = r.text;
+        article.appendChild(text);
+
+        var author = document.createElement('span');
+        author.className = 'testimonial-author';
+        author.textContent = r.author;
+        article.appendChild(author);
+
+        grid.appendChild(article);
+      });
+
+      var btn = document.getElementById('google-review-btn');
+      if (btn && typeof GOOGLE_REVIEW_URL !== 'undefined' && GOOGLE_REVIEW_URL.indexOf('YOUR_PLACE_ID') === -1) {
+        btn.href = GOOGLE_REVIEW_URL;
+      }
+    })();
+
+    /* --------------------------------------------------
+       CONTACT FORM — placeholder handler
+       -------------------------------------------------- */
+    document.getElementById('contact-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Fáza 2: pridať odosielanie (Netlify forms / emailjs / vlastný endpoint)
+    });
+        /* --------------------------------------------------
+      ABOUT_ME — naplnenie kontaktu a textov
+      -------------------------------------------------- */
+    (function() {
+      if (typeof ABOUT_ME === 'undefined') return;
+      var d = ABOUT_ME;
+
+      // Pätička — kontakt
+      var footerLinks = document.querySelectorAll('.footer-col-links');
+      if (footerLinks[1]) {
+        var items = footerLinks[1].querySelectorAll('a');
+        if (items[0] && d.phone) {
+          items[0].href = 'tel:' + d.phone.replace(/\s/g, '');
+          items[0].textContent = d.phone;
+        }
+        if (items[1] && d.email) {
+          items[1].href = 'mailto:' + d.email;
+          items[1].textContent = d.email;
+        }
+      }
+
+      // Pätička — tagline
+      var tagline = document.querySelector('.footer-tagline');
+      if (tagline && d.subtitle) tagline.textContent = d.subtitle;
+
+      // Kontaktný pruh v sekcii #kontakt
+      var csPhone = document.getElementById('cs-phone');
+      if (csPhone && d.phone) {
+        csPhone.href = 'tel:' + d.phone.replace(/\s/g, '');
+        csPhone.textContent = d.phone;
+      }
+      var csEmail = document.getElementById('cs-email');
+      if (csEmail && d.email) {
+        csEmail.href = 'mailto:' + d.email;
+        csEmail.textContent = d.email;
+      }
+      var csLocation = document.getElementById('cs-location');
+      if (csLocation && d.location) csLocation.textContent = d.location;
+
+      // Sekcia "O mne" — bio odseky
+      var aboutText = document.querySelector('#o-mne .about-text');
+      if (aboutText && d.bio && d.bio.length) {
+        // Nájdi existujúce <p> alebo vytvor nové
+        var paragraphs = aboutText.querySelectorAll('p');
+        d.bio.forEach(function(text, i) {
+          if (paragraphs[i]) {
+            paragraphs[i].textContent = text;
+          } else {
+            var p = document.createElement('p');
+            p.textContent = text;
+            aboutText.appendChild(p);
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
