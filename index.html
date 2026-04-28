@@ -1162,7 +1162,8 @@
         <span class="contact-strip-item" id="cs-location">—</span>
       </div>
 
-      <form class="contact-form reveal" id="contact-form" novalidate>
+      <form class="contact-form reveal" id="contact-form" name="kontakt" data-netlify="true" novalidate>
+        <input type="hidden" name="form-name" value="kontakt">
         <div class="form-row">
           <div class="form-group">
             <label for="name">Meno a priezvisko</label>
@@ -1504,7 +1505,25 @@
        -------------------------------------------------- */
     document.getElementById('contact-form')?.addEventListener('submit', function(e) {
       e.preventDefault();
-      // Fáza 2: pridať odosielanie (Netlify forms / emailjs / vlastný endpoint)
+      var form = e.target;
+      var btn  = form.querySelector('button[type="submit"]');
+
+      btn.disabled = true;
+      btn.textContent = 'Odosielam…';
+
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString()
+      })
+        .then(function() {
+          form.innerHTML = '<p style="padding:2rem 0;font-size:1.05rem;">Ďakujeme za správu — ozveme sa čo najskôr.</p>';
+        })
+        .catch(function() {
+          btn.disabled = false;
+          btn.textContent = 'Odoslať správu';
+          alert('Správu sa nepodarilo odoslať. Skúste nás kontaktovať priamo na telefóne.');
+        });
     });
         /* --------------------------------------------------
       ABOUT_ME — naplnenie kontaktu a textov
